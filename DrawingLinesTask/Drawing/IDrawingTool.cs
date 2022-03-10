@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using DrawingLines.Elements;
+using DrawingLines.Elements.Interfaces;
 using DrawingLines.Elements.Lines;
-using DrawingLines.Elements.Shared;
+using DrawingLines.Elements.Points;
 using DrawingLines.Enums;
 
 namespace DrawingLines.Drawing

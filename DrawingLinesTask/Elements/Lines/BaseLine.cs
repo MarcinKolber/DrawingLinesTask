@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using DrawingLines.Elements.Shared;
+using DrawingLines.Elements.Interfaces;
+using DrawingLines.Elements.Points;
 
 namespace DrawingLines.Elements.Lines
 {
     public abstract class BaseLine : IElement
     {
         public bool Drawn { get; set; }
-        public abstract bool IsCompleted();
         public IntersectionPoint? Intersection { get; set; }
 
         public virtual bool CanDraw()

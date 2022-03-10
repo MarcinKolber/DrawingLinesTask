@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using DrawingLines.Elements.Extensions;
-using DrawingLines.Elements.Shared;
+using DrawingLines.Elements.Points;
 
 namespace DrawingLines.Elements.Lines
 {
@@ -43,7 +43,7 @@ namespace DrawingLines.Elements.Lines
             Polyline.Points.Add(new Point(point.X, point.Y));
         }
 
-        public override bool IsCompleted()
+        public bool IsCompleted()
         {
             return Completed;
         }

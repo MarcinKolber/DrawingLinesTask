@@ -8,7 +8,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using DrawingLines.Drawing;
 using DrawingLines.Elements.Lines;
-using DrawingLines.Elements.Shared;
+using DrawingLines.Elements.Points;
 using DrawingLines.Enums;
 
 namespace DrawingLines

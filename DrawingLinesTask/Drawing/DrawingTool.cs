@@ -6,8 +6,9 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using DrawingLines.Elements;
+using DrawingLines.Elements.Interfaces;
 using DrawingLines.Elements.Lines;
-using DrawingLines.Elements.Shared;
+using DrawingLines.Elements.Points;
 using DrawingLines.Enums;
 using LineSegment = DrawingLines.Elements.Lines.LineSegment;
 

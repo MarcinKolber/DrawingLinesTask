@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using DrawingLines.Elements.Shared;
+using DrawingLines.Elements.Points;
 
 namespace DrawingLines.Elements.Lines
 {
@@ -23,8 +23,6 @@ namespace DrawingLines.Elements.Lines
                     Y1 = Start.Y,
                     X2 = End.X,
                     Y2 = End.Y,
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 5,
                 };
 
             return Line;
@@ -64,9 +62,6 @@ namespace DrawingLines.Elements.Lines
             return this;
         }
 
-        public override bool IsCompleted()
-            => Start is not null && End is not null;
-
         public override bool CanDraw() =>  
             !Drawn && Start is not null && End is not null && Intersection is null;
 
@@ -81,8 +76,6 @@ namespace DrawingLines.Elements.Lines
             {
                 X1 = start.X,
                 Y1 = start.Y,
-                Stroke = Brushes.Black,
-                StrokeThickness = 5
             }
         };
 

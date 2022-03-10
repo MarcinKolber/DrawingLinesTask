@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using DrawingLines.Drawing.Constants;
+using DrawingLines.Elements.Interfaces;
 
-namespace DrawingLines.Elements.Shared
+namespace DrawingLines.Elements.Points
 {
     public record IntersectionPoint : BasePoint, IElement
     {
@@ -36,11 +33,6 @@ namespace DrawingLines.Elements.Shared
                 };
             }
             return PointElement;
-        }
-
-        public UIElement CanDrawNewElement()
-        {
-            throw new NotImplementedException();
         }
 
         public bool Drawn { get; set; }
