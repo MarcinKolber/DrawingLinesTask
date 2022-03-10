@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DrawingLines"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1280" Name="mainWindow">
+        Title="Lines Drawing Tool" Height="720" Width="1280" Name="mainWindow">
     <Grid 
         Name="mainGrid"  
         MinHeight="200" MinWidth="200" Background="Aquamarine">
