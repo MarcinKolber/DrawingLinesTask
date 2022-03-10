@@ -17,13 +17,13 @@
         </Grid.ColumnDefinitions>
         <ListBox Grid.Column="0" x:Name="LogsList">
             <RadioButton Content="Straight Line" Canvas.Left="96" Canvas.Top="84" x:Name="StraightLineMode" Checked="StraightLineMode_OnChecked" />
-            <RadioButton Content="Polyline" Canvas.Left="96" Canvas.Top="84" x:Name="ContinuousLineMode" Checked="ContinuousLineMode_OnChecked"/>
+            <RadioButton Content="Polyline" Canvas.Left="96" Canvas.Top="84" x:Name="PolylineMode" Checked="Polyline_OnChecked"/>
 
             <Button Content="Clear" Click="ButtonBase_OnClick"></Button>
             <Separator/>
         </ListBox>
 
-        <Canvas Name="DrawingArea" Background="Beige" PreviewMouseDown="Canvas1_OnPreviewMouseDown" Grid.Column="1" MouseDown="DrawingArea_OnMouseDown" >
+        <Canvas Name="DrawingArea" Background="Beige" PreviewMouseDown="DrawingArea_OnPreviewMouseDown" Grid.Column="1" MouseDown="DrawingArea_OnMouseDown" >
         </Canvas>
       
     </Grid>

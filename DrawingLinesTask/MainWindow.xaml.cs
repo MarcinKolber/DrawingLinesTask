@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using DrawingLines.Drawing;
 using DrawingLines.Elements.Lines;
+using DrawingLines.Elements.Shared;
 using DrawingLines.Enums;
 
 namespace DrawingLines
@@ -17,6 +19,10 @@ namespace DrawingLines
     public partial class MainWindow : Window
     {
         private readonly IDrawingTool _drawingTool;
+        private readonly Brush NewPointColor = Brushes.DarkRed;
+        private readonly Brush CompletedPointColor = Brushes.Black;
+        private readonly Brush LineColor = Brushes.Black;
+        private readonly int LineThickness = 5;
 
         public MainWindow()
         {
@@ -25,122 +31,140 @@ namespace DrawingLines
             StraightLineMode.IsChecked = true;
         }
 
-        private void Canvas1_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void DrawingArea_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             var x = e.GetPosition(DrawingArea).X;
             var y = e.GetPosition(DrawingArea).Y;
 
+            ClearIntersectionPoints();
+
+            var element = _drawingTool.AddPoint(x, y);
+
+            if (element.GetType() == typeof(StraightLine))
+                DrawStraightLine((StraightLine) element);
+
+            if (element.GetType() == typeof(MultiLine))
+                DrawMultiLine((MultiLine)element);
+        }
+
+        private void ClearIntersectionPoints()
+        {
             var intersectionPoints = _drawingTool.GetIntersectionPoints();
 
             foreach (var intersectionPoint in intersectionPoints)
             {
                 DrawingArea.Children.Remove(intersectionPoint.GetUIElement());
             }
-            
-            var element = _drawingTool.AddPoint(x, y);
+        }
 
-            if (element.GetType() == typeof(StraightLine))
+        private void AddNewLogEntry(string content)
+        {
+            var label = new Label
             {
-                DrawStraightLine((StraightLine) element);
-            }
+                Content = content
+            };
 
-            if (element.GetType() == typeof(MultiLine))
+            LogsList.Items.Add(label);
+        }
+
+        private void ColorPointsBlack(IEnumerable<LineEndpoint> points)
+        {
+            ColorPoints(points, CompletedPointColor);
+        }
+
+        private void ColorPointsRed(IEnumerable<LineEndpoint> points)
+        {
+            ColorPoints(points, NewPointColor);
+        }
+
+        private static void ColorPoints(IEnumerable<LineEndpoint> points, Brush brush)
+        {
+            foreach (var point in points)
             {
-                DrawMultiLine((MultiLine)element);
+                ((Ellipse)point.GetUIElement()).Fill = brush;
             }
+        }
+
+        private void DrawNewPoint(LineEndpoint point)
+        {
+            var pointElement = (Ellipse)point.GetUIElement();
+
+            pointElement.Fill = NewPointColor;
+
+            if (!DrawingArea.Children.Contains(pointElement))
+            {
+                DrawingArea.Children.Add(pointElement);
+
+                Canvas.SetLeft(pointElement, point.X - 5);
+                Canvas.SetTop(pointElement, point.Y - 5);
+            }
+        }
+
+        private void DrawIntersectionPoint(UIElement uiElement, double x, double y)
+        {
+            if (DrawingArea.Children.Contains(uiElement))
+                return;
+
+            DrawingArea.Children.Add(uiElement);
+            Canvas.SetLeft(uiElement, x - 5);
+            Canvas.SetTop(uiElement, y - 5);
+        }
+
+        private void DrawLineEndpoint(LineEndpoint endpoint)
+        {
+            var uiElement = (Ellipse) endpoint.GetUIElement();
+
+            if (DrawingArea.Children.Contains(uiElement))
+                return;
+
+            DrawingArea.Children.Add(uiElement);
+            Canvas.SetLeft(uiElement, endpoint.X - 5);
+            Canvas.SetTop(uiElement, endpoint.Y - 5);
         }
 
         private void DrawStraightLine(StraightLine line)
         {
             if (line.CanDraw())
             {
-                var uiElement = line.GetUIElement();
-
-                if (uiElement is null)
-                    return;
+                var uiElement = (Line) line.GetUIElement();
+                uiElement.StrokeThickness = LineThickness;
+                uiElement.Stroke = LineColor;
 
                 DrawingArea.Children.Add(uiElement);
                 line.Drawn = true;
-                var label = new Label();
-                label.Content = $"New line added A({line.Start.X}, {line.Start.Y}), B({line.Start.X}, {line.Start.Y})";
-
-                LogsList.Items.Add(label);
+                AddNewLogEntry($"New line added A({line.Start.X}, {line.Start.Y}), B({line.Start.X}, {line.Start.Y})");
             }
-
 
             if (line.IsDrawn())
-            {
-                ((Ellipse) line.Start.GetUIElement()).Fill = Brushes.Black;
-                ((Ellipse)line.End.GetUIElement()).Fill = Brushes.Black;
-            }
+                ColorPointsBlack(line.GetAllPoints());
             else
-            {
-                var startingPoint = ((Ellipse)line.Start?.GetUIElement()).Fill = Brushes.DarkRed;
-
-                if(line.End is not null)
-                    ((Ellipse)line.End.GetUIElement()).Fill = Brushes.DarkRed;
-            }
+                ColorPointsRed(line.GetAllPoints());
 
             var intersection = line.Intersection;
 
-            if (intersection != null)
+            var intersectionPoint = intersection?.GetUIElement();
+
+            if (intersectionPoint != null)
             {
-                var intersectionPoint = intersection.GetUIElement();
+                DrawIntersectionPoint(intersectionPoint, intersection.X, intersection.Y);
+                AddNewLogEntry(
+                    $"Intersection at P({Math.Round(intersection.X, 2)}, {Math.Round(intersection.Y, 2)})");
 
-                if (intersectionPoint is not null)
-                {
-                    if (!DrawingArea.Children.Contains(intersectionPoint))
-                    {
-                        DrawingArea.Children.Add(intersection.GetUIElement());
-                        Canvas.SetLeft(intersection.GetUIElement(), intersection.X - 5);
-                        Canvas.SetTop(intersection.GetUIElement(), intersection.Y - 5);
-
-                        var label = new Label
-                        {
-                            Content = $"Intersection at P({Math.Round(intersection.X, 1)}, {Math.Round(intersection.Y, 1)})"
-                        };
-
-                        LogsList.Items.Add(label);
-                    }
-
-                    RemoveStraightLine(line);
-                    _drawingTool.RemoveLine(line);
-                    return;
-                }
+                RemoveStraightLine(line);
+                _drawingTool.RemoveLine(line);
+                return;
             }
 
             if (line.Start is not null)
-            {
-                var startingPoint = line.Start.GetUIElement();
-
-                if (!DrawingArea.Children.Contains(startingPoint))
-                {
-                    DrawingArea.Children.Add(line.Start.GetUIElement());
-                    Canvas.SetLeft(startingPoint, line.Start.X - 5);
-                    Canvas.SetTop(startingPoint, line.Start.Y - 5);
-                }
-            }
+                DrawLineEndpoint(line.Start);
 
             if (line.End is not null)
-            {
-                var endingPoint = line.End.GetUIElement();
-
-                if (!DrawingArea.Children.Contains(endingPoint))
-                {
-                    DrawingArea.Children.Add(line.End.GetUIElement());
-                    Canvas.SetLeft(endingPoint, line.End.X - 5);
-                    Canvas.SetTop(endingPoint, line.End.Y - 5);
-                }
-            }
-
+                DrawLineEndpoint(line.End);
         }
 
         private void DrawMultiLine(MultiLine multiLine)
         {
-            var uiElement = (Polyline) multiLine.GetUIElement();
-
-            if (uiElement is null)
-                return;
+            var uiElement = (Polyline)multiLine.GetUIElement();
 
             if (multiLine.Intersection is not null)
             {
@@ -149,77 +173,39 @@ namespace DrawingLines
                 Canvas.SetLeft(intersectionPoint, multiLine.Intersection.X - 5);
                 Canvas.SetTop(intersectionPoint, multiLine.Intersection.Y - 5);
 
-                var label = new Label
-                {
-                    Content = $"Intersection at ({multiLine.Intersection.X},{multiLine.Intersection.Y})"
-                };
-
-                LogsList.Items.Add(label);
+                AddNewLogEntry($"Intersection at ({Math.Round(multiLine.Intersection.X, 2)},{Math.Round(multiLine.Intersection.Y, 2)})");
+                multiLine.Intersection = null;
             }
 
-            if (multiLine.IsDrawn())
+            ColorPointsRed(multiLine.GetAllPoints());
+
+            foreach (var point in multiLine.Points)
             {
-                //foreach (var point in multiLine.Points)
-                //{
-                //    ((Ellipse) point.GetUIElement()).Fill = Brushes.Black;
-                //}
+                DrawNewPoint(point);
             }
-            else
+
+            if (!DrawingArea.Children.Contains(uiElement))
             {
-                foreach (var point in multiLine.Points)
-                {
-                    var pointElement = (Ellipse) point.GetUIElement();
-
-                    pointElement.Fill = Brushes.DarkRed;
-
-                    if (!DrawingArea.Children.Contains(pointElement))
-                    {
-                        DrawingArea.Children.Add(pointElement);
-
-                        Canvas.SetLeft(pointElement, point.X - 5);
-                        Canvas.SetTop(pointElement, point.Y - 5);
-                    }
-                }
-
-                uiElement.Stroke = Brushes.Black;
-                //uiElement.StrokeThickness = 5;
-                //DrawingArea.Children.Remove(uiElement);
-                //DrawingArea.Children.Add(uiElement);
-                if (!DrawingArea.Children.Contains(uiElement))
-                {
-                    DrawingArea.Children.Add(uiElement);
-                }
-
+                uiElement.StrokeThickness = LineThickness;
+                uiElement.Stroke = LineColor;
+                DrawingArea.Children.Add(uiElement);
             }
-
         }
-
 
         private void RemoveStraightLine(StraightLine line)
         {
             var startPoint = line.Start?.GetUIElement();
             var endPoint = line.End?.GetUIElement();
+            var lineElement = line.GetUIElement();
 
-            if (startPoint != null && DrawingArea.Children.Contains(startPoint))
-            {
+            if (startPoint is not null && DrawingArea.Children.Contains(startPoint))
                 DrawingArea.Children.Remove(startPoint);
-            }
 
-            if (endPoint != null && DrawingArea.Children.Contains(endPoint))
-            {
+            if (endPoint is not null && DrawingArea.Children.Contains(endPoint))
                 DrawingArea.Children.Remove(endPoint);
-            }
 
-            if (line.GetUIElement() != null && DrawingArea.Children.Contains(line.GetUIElement()))
-            {
+            if (DrawingArea.Children.Contains(lineElement))
                 DrawingArea.Children.Remove(line.GetUIElement());
-            }
-        }
-
-
-        private void DrawPoint(ILine line)
-        {
-
         }
 
         private void StraightLineMode_OnChecked(object sender, RoutedEventArgs e)
@@ -227,7 +213,7 @@ namespace DrawingLines
             _drawingTool.SetMode(DrawingMode.StraightLine);
         }
 
-        private void ContinuousLineMode_OnChecked(object sender, RoutedEventArgs e)
+        private void Polyline_OnChecked(object sender, RoutedEventArgs e)
         {
             _drawingTool.SetMode(DrawingMode.PolygonalLine);
         }
@@ -236,7 +222,11 @@ namespace DrawingLines
         {
             if (e.ClickCount == 2)
             {
-                _drawingTool.FinishMultiline();
+                var multiLine = _drawingTool.FinishMultiline();
+
+                ColorPointsBlack(multiLine.GetAllPoints());
+
+                AddNewLogEntry($"New polyline added");
             }
         }
 
@@ -245,11 +235,9 @@ namespace DrawingLines
             _drawingTool.Reset();
             DrawingArea.Children.RemoveRange(0, DrawingArea.Children.Count);
             var logs = LogsList.Items.OfType<Label>().ToList();
-            foreach (var log in logs)
-            {
-                LogsList.Items.Remove(log);
 
-            }
+            foreach (var log in logs)
+                LogsList.Items.Remove(log);
         }
     }
 }

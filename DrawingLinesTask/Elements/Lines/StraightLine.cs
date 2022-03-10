@@ -11,8 +11,8 @@ namespace DrawingLines.Elements.Lines
     public class StraightLine : BaseLine
     {
         public Line? Line { get; set; }
-        public LineEndPoint? Start { get; set; }
-        public LineEndPoint? End { get; set; }
+        public LineEndpoint? Start { get; set; }
+        public LineEndpoint? End { get; set; }
 
         public override UIElement GetUIElement()
         {
@@ -30,11 +30,6 @@ namespace DrawingLines.Elements.Lines
             return Line;
         }
 
-        public override UIElement CanDrawNewElement()
-        {
-            throw new NotImplementedException();
-        }
-
         public override IEnumerable<LineSegment> GetLineSegments()
         {
             var segments = new List<LineSegment>();
@@ -45,9 +40,22 @@ namespace DrawingLines.Elements.Lines
             return segments;
         }
 
+        public override IEnumerable<LineEndpoint> GetAllPoints()
+        {
+            var points = new List<LineEndpoint>();
+
+            if (Start is not null)
+                points.Add(Start);
+
+            if (End is not null)
+                points.Add(End);
+
+            return points;
+        }
+
         public StraightLine EndLine(GeometryPoint end)
         {
-            End = new LineEndPoint
+            End = new LineEndpoint
             {
                 X = end.X,
                 Y = end.Y,
@@ -57,33 +65,35 @@ namespace DrawingLines.Elements.Lines
         }
 
         public override bool IsCompleted()
-        {
-            //Start.PointElement.Fill = Brushes.Black;
-            //End.PointElement.Fill = Brushes.Black;
-
-            return true;
-        }
+            => Start is not null && End is not null;
 
         public override bool CanDraw() =>  
-            !Drawn && Start != null && End != null;
+            !Drawn && Start is not null && End is not null && Intersection is null;
 
         public static StraightLine Create(GeometryPoint start) => new()
         {
-            Start = new LineEndPoint
+            Start = new LineEndpoint
             {
                 X = start.X,
                 Y = start.Y,
+            }, 
+            Line = new Line
+            {
+                X1 = start.X,
+                Y1 = start.Y,
+                Stroke = Brushes.Black,
+                StrokeThickness = 5
             }
         };
 
         public static StraightLine Create(GeometryPoint start, GeometryPoint end) => new()
         {
-            Start = new LineEndPoint
+            Start = new LineEndpoint
             {
                 X = start.X,
                 Y = start.Y,
             },
-            End = new LineEndPoint
+            End = new LineEndpoint
             {
                 X = end.X,
                 Y = end.Y,

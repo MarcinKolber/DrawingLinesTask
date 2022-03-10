@@ -11,7 +11,7 @@ using DrawingLines.Elements.Lines;
 
 namespace DrawingLines.Elements.Shared
 {
-    public record LineEndPoint : BasePoint
+    public record LineEndpoint : BasePoint
     {
         public Ellipse? PointElement { get; set; }
         public bool Applied { get; set; }
@@ -61,6 +61,6 @@ namespace DrawingLines.Elements.Shared
 
         public bool Drawn { get; set; }
 
-        public static implicit operator GeometryPoint(LineEndPoint lineEndPoint) => new () { X = lineEndPoint.X, Y = lineEndPoint.Y };
+        public static implicit operator GeometryPoint(LineEndpoint lineEndpoint) => new () { X = lineEndpoint.X, Y = lineEndpoint.Y };
     }
 }

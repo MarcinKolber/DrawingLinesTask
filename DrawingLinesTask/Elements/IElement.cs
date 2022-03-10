@@ -13,7 +13,6 @@ namespace DrawingLines.Elements
         bool CanDraw();
         bool IsDrawn();
         UIElement GetUIElement();
-        UIElement CanDrawNewElement();
         bool Drawn { get; set; }
     }
 }

@@ -15,20 +15,18 @@ namespace DrawingLines.Elements.Lines
     {
         public Polyline? Polyline { get; set; }
 
-        public List<LineEndPoint> Points { get; set; } = new List<LineEndPoint>();
+        public List<LineEndpoint> Points { get; set; } = new List<LineEndpoint>();
         public bool Completed { get; set; }
 
         public static MultiLine Create(GeometryPoint start) => new()
         {
-            Points = new List<LineEndPoint>()
+            Points = new List<LineEndpoint>()
             {
                 start.ToEndpoint()
             },
             Polyline = new Polyline
             {
                 Points = new PointCollection { new(start.X, start.Y) },
-                Stroke = Brushes.Black,
-                StrokeThickness = 5,
             }
         };
 
@@ -40,8 +38,6 @@ namespace DrawingLines.Elements.Lines
                 Polyline = new Polyline
                 {
                     Points = new PointCollection(Points.Select(x => new Point(x.X, x.Y))),
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 5,
                 };
 
             Polyline.Points.Add(new Point(point.X, point.Y));
@@ -58,16 +54,9 @@ namespace DrawingLines.Elements.Lines
                 return new Polyline
                 {
                     Points = new PointCollection(Points.Select(x => new Point(x.X, x.Y))),
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 5,
                 };
 
             return Polyline;
-        }
-
-        public override UIElement CanDrawNewElement()
-        {
-            throw new NotImplementedException();
         }
 
         public override IEnumerable<LineSegment> GetLineSegments()
@@ -82,6 +71,9 @@ namespace DrawingLines.Elements.Lines
 
             return segments;
         }
+
+        public override IEnumerable<LineEndpoint> GetAllPoints()
+            => Points;
 
         public void RemoveLastPoint()
         {

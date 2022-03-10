@@ -17,7 +17,7 @@ namespace DrawingLines.Drawing
         void RemoveLine(BaseLine line);
         IEnumerable<IntersectionPoint> GetIntersectionPoints();
         DrawingTool SetMode(DrawingMode mode);
-        void FinishMultiline();
+        MultiLine FinishMultiline();
         void Reset();
     }
 }

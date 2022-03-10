@@ -9,7 +9,7 @@ namespace DrawingLines.Elements.Extensions
 {
     public static class GeometryPointExtensions
     {
-        public static LineEndPoint ToEndpoint(this GeometryPoint geometryPoint)
+        public static LineEndpoint ToEndpoint(this GeometryPoint geometryPoint)
             => new()
             {
                 X = geometryPoint.X,

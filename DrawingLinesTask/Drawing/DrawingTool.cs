@@ -33,7 +33,7 @@ namespace DrawingLines.Drawing
             return this;
         }
 
-        public void FinishMultiline()
+        public MultiLine FinishMultiline()
         {
             if (_mode == DrawingMode.PolygonalLine)
             {
@@ -43,9 +43,11 @@ namespace DrawingLines.Drawing
                 {
                     var multiline = (MultiLine) line;
                     multiline.Completed = true;
+                    return line;
                 }
-
             }
+
+            return null;
         }
 
         public void Reset()
@@ -119,21 +121,18 @@ namespace DrawingLines.Drawing
                 currentLine.Intersection = IntersectionPoint.Create(intersectionPoint.Value.X, intersectionPoint.Value.Y);
                 _intersectionPoints.Add(currentLine.Intersection);
                 _elements.Add(currentLine.Intersection);
+
                 RemoveLine(currentLine);
                 return currentLine;
             }
 
             currentLine.Line = new Line
             {
-                Stroke = Brushes.Black,
-                StrokeThickness = 5,
                 X1 = currentLine.Start?.X ?? 0,
                 X2 = currentLine.End?.X ?? 0,
                 Y1 = currentLine.Start?.Y ?? 0,
                 Y2 = currentLine.End?.Y ?? 0,
             };
-
-            currentLine.IsCompleted();
 
             return currentLine;
         }
@@ -204,7 +203,7 @@ namespace DrawingLines.Drawing
             foreach (var lineSegmentA in lineSegmentsB)
             {
                 if(lineSegmentA != segment)
-                    intersection = MathHelper.LineIntersection(lineSegmentA, segment, 1);
+                    intersection = MathHelper.LineIntersection(lineSegmentA, segment, 0.001);
 
                 if (intersection is not null)
                     return intersection;

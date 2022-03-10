@@ -25,9 +25,7 @@ namespace DrawingLines.Elements.Lines
         }
 
         public abstract UIElement GetUIElement();
-
-        public abstract UIElement CanDrawNewElement();
-
         public abstract IEnumerable<LineSegment> GetLineSegments();
+        public abstract IEnumerable<LineEndpoint> GetAllPoints();
     }
 }
