@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using DrawingLines.Drawing;
+using DrawingLines.Drawing.Constants;
 using DrawingLines.Elements.Lines;
 using DrawingLines.Elements.Points;
 using DrawingLines.Enums;
@@ -19,10 +20,7 @@ namespace DrawingLines
     public partial class MainWindow : Window
     {
         private readonly IDrawingTool _drawingTool;
-        private readonly Brush NewPointColor = Brushes.DarkRed;
-        private readonly Brush CompletedPointColor = Brushes.Black;
-        private readonly Brush LineColor = Brushes.Black;
-        private readonly int LineThickness = 5;
+    
 
         public MainWindow()
         {
@@ -69,12 +67,12 @@ namespace DrawingLines
 
         private void ColorPointsBlack(IEnumerable<LineEndpoint> points)
         {
-            ColorPoints(points, CompletedPointColor);
+            ColorPoints(points, PointStyling.CompletedPointColor);
         }
 
         private void ColorPointsRed(IEnumerable<LineEndpoint> points)
         {
-            ColorPoints(points, NewPointColor);
+            ColorPoints(points, PointStyling.NewPointColor);
         }
 
         private static void ColorPoints(IEnumerable<LineEndpoint> points, Brush brush)
@@ -89,7 +87,7 @@ namespace DrawingLines
         {
             var pointElement = (Ellipse)point.GetUIElement();
 
-            pointElement.Fill = NewPointColor;
+            pointElement.Fill = PointStyling.NewPointColor;
 
             if (!DrawingArea.Children.Contains(pointElement))
             {
@@ -127,8 +125,8 @@ namespace DrawingLines
             if (line.CanDraw())
             {
                 var uiElement = (Line) line.GetUIElement();
-                uiElement.StrokeThickness = LineThickness;
-                uiElement.Stroke = LineColor;
+                uiElement.StrokeThickness = PointStyling.LineThickness;
+                uiElement.Stroke = PointStyling.LineColor;
 
                 DrawingArea.Children.Add(uiElement);
                 line.Drawn = true;
@@ -186,8 +184,8 @@ namespace DrawingLines
 
             if (!DrawingArea.Children.Contains(uiElement))
             {
-                uiElement.StrokeThickness = LineThickness;
-                uiElement.Stroke = LineColor;
+                uiElement.StrokeThickness = PointStyling.LineThickness;
+                uiElement.Stroke = PointStyling.LineColor;
                 DrawingArea.Children.Add(uiElement);
             }
         }
