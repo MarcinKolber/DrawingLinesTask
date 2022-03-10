@@ -1,0 +1,30 @@
+﻿<Window x:Class="DrawingLines.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DrawingLines"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="720" Width="1280" Name="mainWindow">
+    <Grid 
+        Name="mainGrid"  
+        MinHeight="200" MinWidth="200" Background="Aquamarine">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
+            <!-- Or Auto -->
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ListBox Grid.Column="0" x:Name="LogsList">
+            <RadioButton Content="Straight Line" Canvas.Left="96" Canvas.Top="84" x:Name="StraightLineMode" Checked="StraightLineMode_OnChecked" />
+            <RadioButton Content="Polyline" Canvas.Left="96" Canvas.Top="84" x:Name="ContinuousLineMode" Checked="ContinuousLineMode_OnChecked"/>
+
+            <Button Content="Clear" Click="ButtonBase_OnClick"></Button>
+            <Separator/>
+        </ListBox>
+
+        <Canvas Name="DrawingArea" Background="Beige" PreviewMouseDown="Canvas1_OnPreviewMouseDown" Grid.Column="1" MouseDown="DrawingArea_OnMouseDown" >
+        </Canvas>
+      
+    </Grid>
+</Window>
